@@ -1,0 +1,437 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}New Bill{% endblock %}
+{% block page_title %}🧾 Create New Invoice{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bill-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(26,82,118,0.10); }
+    .bill-header { background: linear-gradient(135deg, #1a5276 0%, #2e86c1 100%); color: #fff; border-radius: 16px 16px 0 0; padding: 20px 24px; }
+    .item-row { background: #f8fafc; border-radius: 10px; padding: 14px; margin-bottom: 10px; position: relative; border: 1.5px solid #e8edf2; transition: border-color 0.2s; }
+    .item-row:hover { border-color: #2e86c1; }
+    .remove-item { position: absolute; top: 10px; right: 10px; background: #fdedec; border: none; color: #e74c3c; border-radius: 8px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: background 0.2s; }
+    .remove-item:hover { background: #e74c3c; color: #fff; }
+    .total-section { background: linear-gradient(135deg, #eaf4fb 0%, #f0f9ff 100%); border-radius: 12px; padding: 20px; border: 1.5px solid #d0e8f5; }
+    .total-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 0.9rem; }
+    .total-row.grand { font-size: 1.2rem; font-weight: 700; color: #1a5276; border-top: 2px solid #1a5276; margin-top: 8px; padding-top: 12px; }
+    .medicine-autocomplete { position: relative; }
+    .autocomplete-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1.5px solid #dee2e6; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 9999; max-height: 240px; overflow-y: auto; display: none; }
+    .autocomplete-item { padding: 10px 14px; cursor: pointer; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f4f8; transition: background 0.15s; }
+    .autocomplete-item:hover { background: #eaf4fb; }
+    .autocomplete-item .med-name { font-weight: 600; color: #1a5276; }
+    .autocomplete-item .med-info { font-size: 0.75rem; color: #7f8c8d; }
+    .autocomplete-item .med-price { font-weight: 600; color: #27ae60; }
+    #addItemBtn { border: 2px dashed #2e86c1; background: transparent; color: #2e86c1; border-radius: 12px; padding: 12px; width: 100%; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    #addItemBtn:hover { background: #eaf4fb; }
+    .wa-btn { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); border: none; color: #fff; border-radius: 12px; padding: 12px 24px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+    .wa-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(37,211,102,0.4); }
+    .wa-icon { font-size: 1.3rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Bill Form -->
+    <div class="col-12 col-lg-8">
+        <div class="bill-card">
+            <div class="bill-header">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-receipt" style="font-size:1.8rem"></i>
+                    <div>
+                        <h5 class="mb-0">New Invoice</h5>
+                        <small style="opacity:0.8">Swastik Pharmacy & Surgical Center</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4">
+                <!-- Patient Info -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Patient Name</label>
+                        <input type="text" id="patientName" class="form-control" placeholder="Enter patient name">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Doctor Name</label>
+                        <input type="text" id="doctorName" class="form-control" placeholder="Referring doctor">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Patient Phone (for WhatsApp)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">+91</span>
+                            <input type="tel" id="patientPhone" class="form-control" placeholder="10-digit number">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="billDate" class="form-control" value="{{ today|date:'Y-m-d' }}">
+                    </div>
+                </div>
+
+                <hr class="my-3">
+
+                <!-- Medicine Items -->
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="mb-0 fw-600" style="color:#1a5276"><i class="bi bi-capsule me-2"></i>Medicine Items</h6>
+                </div>
+
+                <div id="itemsContainer"></div>
+
+                <button id="addItemBtn" onclick="addItem()">
+                    <i class="bi bi-plus-circle me-2"></i> Add Medicine
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Panel -->
+    <div class="col-12 col-lg-4">
+        <div class="bill-card p-4 mb-3" style="position: sticky; top: 80px;">
+            <h6 class="fw-600 mb-3" style="color:#1a5276"><i class="bi bi-calculator me-2"></i>Bill Summary</h6>
+
+            <div class="total-section">
+                <div class="total-row">
+                    <span class="text-muted">Subtotal</span>
+                    <span id="summSubtotal">₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span class="text-muted">Discount</span>
+                    <span id="summDiscount" class="text-danger">-₹0.00</span>
+                </div>
+                <div class="total-row">
+                    <span class="text-muted">GST</span>
+                    <span id="summGST">₹0.00</span>
+                </div>
+                <div class="total-row grand">
+                    <span>Grand Total</span>
+                    <span id="summTotal">₹0.00</span>
+                </div>
+            </div>
+
+            <div class="mt-4 d-grid gap-2">
+                <button class="btn btn-primary py-2 fw-600" onclick="saveBill('paid')">
+                    <i class="bi bi-check-circle me-2"></i> Save & Generate Bill
+                </button>
+                <button class="wa-btn" onclick="saveBill('whatsapp')">
+                    <span class="wa-icon">📱</span> Save & Send WhatsApp
+                </button>
+                <button class="btn btn-outline-secondary" onclick="clearAll()">
+                    <i class="bi bi-trash me-1"></i> Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WhatsApp Modal -->
+<div class="modal fade" id="waModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius:16px; overflow:hidden">
+            <div class="modal-header" style="background: linear-gradient(135deg, #25D366, #128C7E); color:#fff; border:none">
+                <h5 class="modal-title"><span class="wa-icon">📱</span> Send via WhatsApp</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted mb-3">Bill saved successfully! Send it to the patient via WhatsApp.</p>
+                <div class="mb-3">
+                    <label class="form-label fw-500">Patient WhatsApp Number</label>
+                    <div class="input-group">
+                        <span class="input-group-text">+91</span>
+                        <input type="tel" id="waPhone" class="form-control" placeholder="10-digit number">
+                    </div>
+                </div>
+                <div id="waPreview" class="p-3 rounded" style="background:#eafaf1; font-family:monospace; font-size:0.8rem; white-space:pre-wrap; max-height:200px; overflow-y:auto; border:1px solid #a9dfbf"></div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="wa-btn" onclick="sendWhatsApp()">
+                    <span>📤</span> Open WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius:16px; overflow:hidden">
+            <div class="modal-body text-center p-5">
+                <div style="font-size:4rem">✅</div>
+                <h4 class="mt-3 fw-700" style="color:#1a5276">Bill Created!</h4>
+                <p class="text-muted" id="successBillNo"></p>
+                <div class="d-flex gap-2 justify-content-center mt-4">
+                    <a id="viewBillBtn" href="#" class="btn btn-primary">View Bill</a>
+                    <a id="pdfBillBtn" href="#" class="btn btn-success" target="_blank">
+                        <i class="bi bi-file-pdf me-1"></i>Download PDF
+                    </a>
+                    <button class="btn btn-outline-secondary" onclick="location.reload()">New Bill</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const ALL_MEDICINES = {{ medicines_json|safe }};
+let items = [];
+let savedBillId = null;
+let savedBillNo = null;
+
+function addItem() {
+    const id = Date.now();
+    items.push({ id, medicine: null, qty: 1, discount: 0 });
+    renderItems();
+    setTimeout(() => {
+        const input = document.querySelector(`[data-id="${id}"] .med-search`);
+        if (input) input.focus();
+    }, 50);
+}
+
+function removeItem(id) {
+    items = items.filter(i => i.id !== id);
+    renderItems();
+    calcTotals();
+}
+
+function renderItems() {
+    const container = document.getElementById('itemsContainer');
+    if (items.length === 0) {
+        container.innerHTML = `<div class="text-center py-4 text-muted mb-3"><i class="bi bi-capsule" style="font-size:2rem;opacity:0.3"></i><p class="mt-2 mb-0">No medicines added yet</p></div>`;
+        return;
+    }
+    container.innerHTML = items.map((item, idx) => `
+        <div class="item-row" data-id="${item.id}">
+            <button class="remove-item" onclick="removeItem(${item.id})"><i class="bi bi-x"></i></button>
+            <div class="row g-2 align-items-end">
+                <div class="col-12 col-md-5">
+                    <label class="form-label mb-1" style="font-size:0.78rem">Medicine ${idx+1}</label>
+                    <div class="medicine-autocomplete">
+                        <input type="text" class="form-control form-control-sm med-search"
+                            placeholder="Search medicine..."
+                            value="${item.medicine ? item.medicine.name : ''}"
+                            oninput="searchMedicine(this, ${item.id})"
+                            onfocus="showDropdown(this, ${item.id})"
+                            autocomplete="off">
+                        <div class="autocomplete-dropdown" id="drop_${item.id}"></div>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2">
+                    <label class="form-label mb-1" style="font-size:0.78rem">MRP ₹</label>
+                    <input type="number" class="form-control form-control-sm"
+                        value="${item.medicine ? item.medicine.mrp : ''}"
+                        placeholder="MRP"
+                        onchange="updateField(${item.id}, 'mrp', this.value)"
+                        ${!item.medicine ? 'disabled' : ''}>
+                </div>
+                <div class="col-4 col-md-2">
+                    <label class="form-label mb-1" style="font-size:0.78rem">Qty</label>
+                    <input type="number" class="form-control form-control-sm" min="0.1" step="0.1"
+                        value="${item.qty}"
+                        onchange="updateField(${item.id}, 'qty', this.value)"
+                        ${!item.medicine ? 'disabled' : ''}>
+                </div>
+                <div class="col-4 col-md-2">
+                    <label class="form-label mb-1" style="font-size:0.78rem">Disc %</label>
+                    <input type="number" class="form-control form-control-sm" min="0" max="100" step="0.5"
+                        value="${item.discount}"
+                        onchange="updateField(${item.id}, 'discount', this.value)"
+                        ${!item.medicine ? 'disabled' : ''}>
+                </div>
+                <div class="col-12 col-md-1 text-end">
+                    <label class="form-label mb-1" style="font-size:0.78rem">Amt</label>
+                    <div class="fw-600 text-success" style="font-size:0.9rem; padding: 6px 0">
+                        ₹${calcItemTotal(item).toFixed(2)}
+                    </div>
+                </div>
+            </div>
+            ${item.medicine ? `<div class="mt-2" style="font-size:0.75rem;color:#7f8c8d">
+                📦 ${item.medicine.category} | Pack: ${item.medicine.pack} | Stock: ${item.medicine.stock} | GST: ${item.medicine.gst_percent*100}%
+            </div>` : ''}
+        </div>
+    `).join('');
+}
+
+function calcItemTotal(item) {
+    if (!item.medicine) return 0;
+    const mrp = item.mrp || item.medicine.mrp;
+    const base = mrp * item.qty;
+    const afterDisc = base * (1 - item.discount/100);
+    const withGST = afterDisc * (1 + item.medicine.gst_percent);
+    return withGST;
+}
+
+function calcTotals() {
+    let subtotal = 0, discAmt = 0, gstAmt = 0, grand = 0;
+    items.forEach(item => {
+        if (!item.medicine) return;
+        const mrp = item.mrp || item.medicine.mrp;
+        const base = mrp * item.qty;
+        const disc = base * item.discount / 100;
+        const afterDisc = base - disc;
+        const gst = afterDisc * item.medicine.gst_percent;
+        subtotal += base;
+        discAmt += disc;
+        gstAmt += gst;
+        grand += afterDisc + gst;
+    });
+    document.getElementById('summSubtotal').textContent = '₹' + subtotal.toFixed(2);
+    document.getElementById('summDiscount').textContent = '-₹' + discAmt.toFixed(2);
+    document.getElementById('summGST').textContent = '₹' + gstAmt.toFixed(2);
+    document.getElementById('summTotal').textContent = '₹' + grand.toFixed(2);
+}
+
+function updateField(id, field, value) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    item[field] = parseFloat(value) || 0;
+    renderItems();
+    calcTotals();
+}
+
+function searchMedicine(input, id) {
+    const q = input.value.toLowerCase();
+    const drop = document.getElementById(`drop_${id}`);
+    if (!q) { drop.style.display = 'none'; return; }
+    const results = ALL_MEDICINES.filter(m => m.name.toLowerCase().includes(q)).slice(0, 8);
+    if (!results.length) { drop.style.display = 'none'; return; }
+    drop.innerHTML = results.map(m => `
+        <div class="autocomplete-item" onclick="selectMedicine(${id}, ${JSON.stringify(m).replace(/"/g,"'")})">
+            <div>
+                <div class="med-name">${m.name}</div>
+                <div class="med-info">${m.category} | ${m.pack} | Stock: ${m.stock}</div>
+            </div>
+            <div class="med-price">₹${m.mrp}</div>
+        </div>
+    `).join('');
+    drop.style.display = 'block';
+}
+
+function showDropdown(input, id) {
+    if (input.value) searchMedicine(input, id);
+}
+
+function selectMedicine(id, med) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    item.medicine = med;
+    item.mrp = med.mrp;
+    document.getElementById(`drop_${id}`).style.display = 'none';
+    renderItems();
+    calcTotals();
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', e => {
+    if (!e.target.closest('.medicine-autocomplete')) {
+        document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.style.display = 'none');
+    }
+});
+
+function clearAll() {
+    items = [];
+    document.getElementById('patientName').value = '';
+    document.getElementById('doctorName').value = '';
+    document.getElementById('patientPhone').value = '';
+    renderItems();
+    calcTotals();
+}
+
+async function saveBill(mode) {
+    const validItems = items.filter(i => i.medicine && i.qty > 0);
+    if (!validItems.length) {
+        alert('Please add at least one medicine!');
+        return;
+    }
+
+    const payload = {
+        patient_name: document.getElementById('patientName').value,
+        doctor_name: document.getElementById('doctorName').value,
+        items: validItems.map(i => ({
+            medicine_id: i.medicine.id,
+            mrp: i.mrp || i.medicine.mrp,
+            quantity: i.qty,
+            discount: i.discount,
+            gst_percent: i.medicine.gst_percent,
+        }))
+    };
+
+    const csrfToken = document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='))?.split('=')[1] || '';
+    try {
+        const res = await fetch('/billing/save/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            savedBillId = data.bill_id;
+            savedBillNo = data.bill_no;
+            if (mode === 'whatsapp') {
+                showWAModal();
+            } else {
+                showSuccess();
+            }
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+    } catch(e) {
+        alert('Network error: ' + e.message);
+    }
+}
+
+function showSuccess() {
+    document.getElementById('successBillNo').textContent = 'Bill No: ' + savedBillNo;
+    document.getElementById('viewBillBtn').href = '/billing/' + savedBillId + '/';
+    document.getElementById('pdfBillBtn').href = '/billing/' + savedBillId + '/pdf/';
+    new bootstrap.Modal(document.getElementById('successModal')).show();
+}
+
+function showWAModal() {
+    const phone = document.getElementById('patientPhone').value;
+    if (phone) document.getElementById('waPhone').value = phone;
+    // Build preview message
+    const patName = document.getElementById('patientName').value || 'Patient';
+    const docName = document.getElementById('doctorName').value || '-';
+    let itemsText = items.filter(i=>i.medicine).map(i=>`• ${i.medicine.name} x${i.qty} = ₹${calcItemTotal(i).toFixed(2)}`).join('\n');
+    const grand = document.getElementById('summTotal').textContent;
+    document.getElementById('waPreview').textContent =
+`✚ Swastik Pharmacy & Surgical Center
+━━━━━━━━━━━━━━━━━
+Bill No: ${savedBillNo}
+Patient: ${patName}
+Doctor: ${docName}
+━━━━━━━━━━━━━━━━━
+${itemsText}
+━━━━━━━━━━━━━━━━━
+TOTAL: ${grand}
+Get well soon! 🙏`;
+    new bootstrap.Modal(document.getElementById('waModal')).show();
+}
+
+async function sendWhatsApp() {
+    let phone = document.getElementById('waPhone').value.trim().replace(/\D/g,'');
+    if (!phone || phone.length < 10) { alert('Enter valid 10-digit number'); return; }
+    if (!phone.startsWith('91') && phone.length === 10) phone = '91' + phone;
+
+    const csrfToken = document.cookie.split(';').find(c=>c.trim().startsWith('csrftoken='))?.split('=')[1] || '';
+    const res = await fetch(`/billing/${savedBillId}/whatsapp/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrfToken },
+        body: 'phone=' + phone
+    });
+    const data = await res.json();
+    if (data.wa_url) {
+        window.open(data.wa_url, '_blank');
+        bootstrap.Modal.getInstance(document.getElementById('waModal')).hide();
+        showSuccess();
+    }
+}
+
+// Init
+renderItems();
+calcTotals();
+addItem(); // Start with one row
+</script>
+{% endblock %}

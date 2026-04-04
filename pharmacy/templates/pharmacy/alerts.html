@@ -1,0 +1,169 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Alerts{% endblock %}
+{% block page_title %}⚠️ Stock & Expiry Alerts{% endblock %}
+
+{% block content %}
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card red text-center">
+            <div class="stat-value text-danger">{{ out_of_stock.count }}</div>
+            <div class="stat-label">Out of Stock</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card orange text-center">
+            <div class="stat-value text-warning">{{ low_stock.count }}</div>
+            <div class="stat-label">Low Stock (≤5)</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card red text-center">
+            <div class="stat-value text-danger">{{ expired.count }}</div>
+            <div class="stat-label">Expired</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card orange text-center">
+            <div class="stat-value" style="color:#d35400">{{ expiring_soon.count }}</div>
+            <div class="stat-label">Expiring (90 days)</div>
+        </div>
+    </div>
+</div>
+
+<!-- Out of Stock -->
+{% if out_of_stock %}
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #c0392b, #e74c3c)">
+        <i class="bi bi-x-circle me-2"></i>🔴 Out of Stock Medicines ({{ out_of_stock.count }})
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead><tr><th>#</th><th>Medicine</th><th>Category</th><th>Pack</th><th>MRP</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for med in out_of_stock %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'medicine_detail' med.pk %}" class="fw-600 text-decoration-none">{{ med.name }}</a></td>
+                        <td><span class="badge bg-light border text-secondary" style="font-size:0.7rem">{{ med.category }}</span></td>
+                        <td>{{ med.pack }}</td>
+                        <td>₹{{ med.mrp }}</td>
+                        <td>
+                            <a href="{% url 'stock_adjust' med.pk %}" class="btn btn-sm btn-danger">
+                                <i class="bi bi-plus me-1"></i>Reorder
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Low Stock -->
+{% if low_stock %}
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #d68910, #f39c12)">
+        <i class="bi bi-exclamation-triangle me-2"></i>🟡 Low Stock Medicines ({{ low_stock.count }})
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead><tr><th>#</th><th>Medicine</th><th>Category</th><th>Stock Left</th><th>MRP</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for med in low_stock %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'medicine_detail' med.pk %}" class="fw-600 text-decoration-none">{{ med.name }}</a></td>
+                        <td><span class="badge bg-light border text-secondary" style="font-size:0.7rem">{{ med.category }}</span></td>
+                        <td><span class="fw-700 text-warning">{{ med.stock }}</span></td>
+                        <td>₹{{ med.mrp }}</td>
+                        <td>
+                            <a href="{% url 'stock_adjust' med.pk %}" class="btn btn-sm btn-warning text-dark">
+                                <i class="bi bi-plus me-1"></i>Add Stock
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Expired -->
+{% if expired %}
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #566573, #717d7e)">
+        <i class="bi bi-calendar-x me-2"></i>⚫ Expired Medicines ({{ expired.count }})
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead><tr><th>#</th><th>Medicine</th><th>Category</th><th>Expiry</th><th>Stock</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for med in expired %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'medicine_detail' med.pk %}" class="fw-600 text-decoration-none">{{ med.name }}</a></td>
+                        <td><span class="badge bg-light border text-secondary" style="font-size:0.7rem">{{ med.category }}</span></td>
+                        <td><span class="text-danger fw-600">{{ med.expiry|date:"M Y" }}</span></td>
+                        <td>{{ med.stock }}</td>
+                        <td>
+                            <a href="{% url 'medicine_edit' med.pk %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil me-1"></i>Update
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Expiring Soon -->
+{% if expiring_soon %}
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #d35400, #e67e22)">
+        <i class="bi bi-clock-history me-2"></i>🟠 Expiring Soon — Next 90 Days ({{ expiring_soon.count }})
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead><tr><th>#</th><th>Medicine</th><th>Category</th><th>Expiry</th><th>Stock</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for med in expiring_soon %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'medicine_detail' med.pk %}" class="fw-600 text-decoration-none">{{ med.name }}</a></td>
+                        <td><span class="badge bg-light border text-secondary" style="font-size:0.7rem">{{ med.category }}</span></td>
+                        <td><span class="text-warning fw-600">{{ med.expiry|date:"M Y" }}</span></td>
+                        <td>{{ med.stock }}</td>
+                        <td>
+                            <a href="{% url 'medicine_edit' med.pk %}" class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-pencil me-1"></i>Update
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if not out_of_stock and not low_stock and not expired and not expiring_soon %}
+<div class="text-center py-5">
+    <div style="font-size:4rem">✅</div>
+    <h4 class="mt-3 fw-600" style="color:#27ae60">All Clear!</h4>
+    <p class="text-muted">No alerts at this time. Your inventory is in great shape!</p>
+</div>
+{% endif %}
+{% endblock %}

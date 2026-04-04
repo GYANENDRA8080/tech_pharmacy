@@ -1,0 +1,81 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Bill History{% endblock %}
+{% block page_title %}📋 Bill History{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="d-flex gap-2">
+            <div class="search-box flex-grow-1">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" class="form-control" placeholder="Search by bill no, patient, doctor..." value="{{ q }}">
+            </div>
+            <button type="submit" class="btn btn-primary px-4">Search</button>
+            {% if q %}<a href="{% url 'billing' %}" class="btn btn-outline-secondary">Clear</a>{% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <span><i class="bi bi-journal-text me-2"></i>All Bills</span>
+        <a href="{% url 'create_bill' %}" class="btn btn-sm btn-light text-primary fw-500">
+            <i class="bi bi-plus me-1"></i> New Bill
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Bill No.</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>WhatsApp</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                    <tr>
+                        <td><strong class="text-primary">{{ bill.bill_no }}</strong></td>
+                        <td>{{ bill.patient_name|default:"Walk-in" }}</td>
+                        <td>{{ bill.doctor_name|default:"-" }}</td>
+                        <td>{{ bill.date }}</td>
+                        <td>{{ bill.items.count }} items</td>
+                        <td class="fw-600 text-success">₹{{ bill.grand_total|floatformat:2 }}</td>
+                        <td>
+                            {% if bill.whatsapp_sent %}
+                                <span class="badge bg-success bg-opacity-10 text-success">✓ Sent</span>
+                            {% else %}
+                                <span class="text-muted" style="font-size:0.78rem">Not sent</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="{% url 'bill_detail' bill.pk %}" class="btn btn-sm btn-outline-primary" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'bill_pdf' bill.pk %}" class="btn btn-sm btn-outline-success" target="_blank" title="PDF">
+                                    <i class="bi bi-file-pdf"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-journal-x" style="font-size:3rem; opacity:0.3"></i>
+                            <p class="mt-2">No bills found. <a href="{% url 'create_bill' %}">Create first bill</a></p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

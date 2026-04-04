@@ -1,0 +1,90 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}{{ medicine.name }}{% endblock %}
+{% block page_title %}💊 {{ medicine.name }}{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-12 col-md-4">
+        <div class="card">
+            <div class="card-header">Medicine Details</div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless mb-0">
+                    <tr><td class="text-muted fw-500" style="width:40%">Name</td><td class="fw-600">{{ medicine.name }}</td></tr>
+                    <tr><td class="text-muted fw-500">Category</td><td>{{ medicine.category }}</td></tr>
+                    <tr><td class="text-muted fw-500">Batch No.</td><td>{{ medicine.batch_no|default:"-" }}</td></tr>
+                    <tr><td class="text-muted fw-500">Pack</td><td>{{ medicine.pack }}</td></tr>
+                    <tr><td class="text-muted fw-500">MRP</td><td class="fw-600">₹{{ medicine.mrp }}</td></tr>
+                    <tr><td class="text-muted fw-500">GST</td><td>{{ medicine.gst_percent }}%</td></tr>
+                    <tr><td class="text-muted fw-500">Stock</td>
+                        <td class="fw-700 {% if medicine.stock <= 0 %}text-danger{% elif medicine.stock <= 5 %}text-warning{% else %}text-success{% endif %}">
+                            {{ medicine.stock }} units
+                        </td>
+                    </tr>
+                    <tr><td class="text-muted fw-500">Stock Value</td><td>₹{{ medicine.stock_value|floatformat:2 }}</td></tr>
+                    <tr><td class="text-muted fw-500">MFD</td><td>{% if medicine.mfd %}{{ medicine.mfd|date:"M Y" }}{% else %}-{% endif %}</td></tr>
+                    <tr><td class="text-muted fw-500">Expiry</td>
+                        <td class="{% if medicine.status == 'expired' %}text-danger fw-600{% elif medicine.status == 'expiring_soon' %}text-warning fw-600{% endif %}">
+                            {% if medicine.expiry %}{{ medicine.expiry|date:"M Y" }}{% else %}-{% endif %}
+                        </td>
+                    </tr>
+                    <tr><td class="text-muted fw-500">Status</td>
+                        <td>
+                            {% if medicine.status == 'in_stock' %}<span class="badge-status badge-in-stock">In Stock</span>
+                            {% elif medicine.status == 'low_stock' %}<span class="badge-status badge-low-stock">Low Stock</span>
+                            {% elif medicine.status == 'out_of_stock' %}<span class="badge-status badge-out-of-stock">Out of Stock</span>
+                            {% elif medicine.status == 'expired' %}<span class="badge-status badge-expired">Expired</span>
+                            {% elif medicine.status == 'expiring_soon' %}<span class="badge-status badge-expiring">Expiring Soon</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+                <div class="d-flex gap-2 mt-3 flex-wrap">
+                    <a href="{% url 'medicine_edit' medicine.pk %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-pencil me-1"></i>Edit
+                    </a>
+                    <a href="{% url 'stock_adjust' medicine.pk %}" class="btn btn-success btn-sm">
+                        <i class="bi bi-arrow-left-right me-1"></i>Stock
+                    </a>
+                    <a href="{% url 'medicine_delete' medicine.pk %}" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash me-1"></i>Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-8">
+        <div class="card">
+            <div class="card-header">Stock Transaction History</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr><th>Date/Time</th><th>Type</th><th>Qty</th><th>Note</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                            <tr>
+                                <td class="text-muted" style="font-size:0.82rem">{{ tx.created_at|date:"d M Y H:i" }}</td>
+                                <td>
+                                    {% if tx.transaction_type == 'in' %}
+                                        <span class="badge-status badge-in-stock">Stock In</span>
+                                    {% elif tx.transaction_type == 'out' %}
+                                        <span class="badge-status badge-out-of-stock">Sale Out</span>
+                                    {% else %}
+                                        <span class="badge-status badge-expiring">Adjustment</span>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-600">{{ tx.quantity }}</td>
+                                <td class="text-muted">{{ tx.note|default:"-" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center text-muted py-4">No transactions yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

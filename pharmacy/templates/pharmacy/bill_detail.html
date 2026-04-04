@@ -1,0 +1,170 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Bill {{ bill.bill_no }}{% endblock %}
+{% block page_title %}🧾 Bill {{ bill.bill_no }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.invoice-box { background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(26,82,118,0.12); overflow: hidden; max-width: 860px; margin: 0 auto; }
+.invoice-header { background: linear-gradient(135deg, #1a5276 0%, #2e86c1 100%); color: #fff; padding: 28px 32px; }
+.invoice-body { padding: 28px 32px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #f8fafc; border-radius: 12px; padding: 18px; margin-bottom: 24px; }
+.info-item .lbl { font-size: 0.72rem; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; }
+.info-item .val { font-weight: 600; color: #2c3e50; font-size: 0.95rem; }
+.invoice-footer { background: #f8fafc; padding: 16px 32px; text-align: center; font-size: 0.8rem; color: #7f8c8d; }
+.wa-share { background: linear-gradient(135deg, #25D366, #128C7E); border: none; color: #fff; border-radius: 10px; padding: 10px 20px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+@media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } .invoice-body { padding: 16px; } .invoice-header { padding: 20px 16px; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Action buttons -->
+<div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="{% url 'billing' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+    <a href="{% url 'bill_pdf' bill.pk %}" class="btn btn-primary" target="_blank">
+        <i class="bi bi-file-pdf me-1"></i> Download PDF
+    </a>
+    <button class="wa-share" onclick="document.getElementById('waPanel').style.display='block'">
+        📱 Send WhatsApp
+    </button>
+</div>
+
+<!-- WhatsApp Panel -->
+<div id="waPanel" style="display:none" class="card mb-4 border-0" style="background: #eafaf1; border-radius: 12px;">
+    <div class="card-body" style="background: #eafaf1; border-radius:12px; border: 1.5px solid #a9dfbf;">
+        <h6 class="fw-600" style="color:#128C7E">📱 Send Bill via WhatsApp</h6>
+        <div class="d-flex gap-2 mt-2">
+            <div class="input-group" style="max-width:300px">
+                <span class="input-group-text">+91</span>
+                <input type="tel" id="waNumber" class="form-control" placeholder="10-digit number">
+            </div>
+            <button class="wa-share" onclick="sendWA()">Send</button>
+        </div>
+    </div>
+</div>
+
+<!-- Invoice -->
+<div class="invoice-box">
+    <div class="invoice-header">
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <div style="font-size:2.5rem">✚</div>
+            <div>
+                <h4 class="mb-0 fw-700">Swastik Pharmacy & Surgical Center</h4>
+                <div style="opacity:0.8; font-size:0.85rem">Prop: Gayatri Upadhyay | Dr. Vikash Mishra | 📞 9450055621 / 8115409504</div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span style="background:rgba(255,255,255,0.2); padding:6px 16px; border-radius:20px; font-size:1rem; font-weight:700">
+                {{ bill.bill_no }}
+            </span>
+            <span style="opacity:0.8">{{ bill.date }}</span>
+        </div>
+    </div>
+
+    <div class="invoice-body">
+        <!-- Patient Info -->
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="lbl">Patient Name</div>
+                <div class="val">{{ bill.patient_name|default:"Walk-in Patient" }}</div>
+            </div>
+            <div class="info-item">
+                <div class="lbl">Doctor</div>
+                <div class="val">{{ bill.doctor_name|default:"-" }}</div>
+            </div>
+            <div class="info-item">
+                <div class="lbl">Date</div>
+                <div class="val">{{ bill.date }}</div>
+            </div>
+            <div class="info-item">
+                <div class="lbl">Status</div>
+                <div class="val">
+                    {% if bill.status == 'paid' %}
+                        <span class="badge-status badge-in-stock">✓ Paid</span>
+                    {% else %}
+                        <span class="badge-status badge-low-stock">{{ bill.status|title }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="table-responsive mb-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Medicine</th>
+                        <th>Cat</th>
+                        <th>Pack</th>
+                        <th>MRP (₹)</th>
+                        <th>Qty</th>
+                        <th>Disc%</th>
+                        <th>GST%</th>
+                        <th class="text-end">Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in bill.items.all %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td class="fw-600">{{ item.medicine_name }}</td>
+                        <td><span class="badge bg-light border text-secondary" style="font-size:0.7rem">{{ item.category }}</span></td>
+                        <td>{{ item.pack }}</td>
+                        <td>₹{{ item.mrp }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.discount_percent }}%</td>
+                        <td>{{ item.gst_percent }}%</td>
+                        <td class="text-end fw-600 text-success">₹{{ item.final_amount|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Totals -->
+        <div class="row justify-content-end">
+            <div class="col-12 col-md-5">
+                <div style="background:#f8fafc; border-radius:12px; padding:16px; border:1.5px solid #e8edf2">
+                    <div class="d-flex justify-content-between mb-2 text-muted" style="font-size:0.9rem">
+                        <span>Subtotal</span><span>₹{{ bill.subtotal|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 text-danger" style="font-size:0.9rem">
+                        <span>Discount</span><span>-₹{{ bill.total_discount|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 text-muted" style="font-size:0.9rem">
+                        <span>GST</span><span>₹{{ bill.total_gst|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between" style="font-size:1.3rem; font-weight:800; color:#1a5276; border-top:2px solid #1a5276; padding-top:12px">
+                        <span>GRAND TOTAL</span><span>₹{{ bill.grand_total|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="invoice-footer">
+        <strong>Thank you for choosing Swastik Pharmacy & Surgical Center</strong><br>
+        Get well soon! 🙏 | 📞 9450055621 / 8115409504
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function sendWA() {
+    let phone = document.getElementById('waNumber').value.trim().replace(/\D/g,'');
+    if (!phone || phone.length < 10) { alert('Enter valid 10-digit number'); return; }
+    if (!phone.startsWith('91') && phone.length === 10) phone = '91' + phone;
+    const csrf = document.cookie.split(';').find(c=>c.trim().startsWith('csrftoken='))?.split('=')[1] || '';
+    const res = await fetch('/billing/{{ bill.pk }}/whatsapp/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf },
+        body: 'phone=' + phone
+    });
+    const data = await res.json();
+    if (data.wa_url) window.open(data.wa_url, '_blank');
+}
+</script>
+{% endblock %}

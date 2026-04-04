@@ -1,0 +1,50 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Stock Adjustment{% endblock %}
+{% block page_title %}📦 Stock Adjustment{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-12 col-lg-6">
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-arrow-left-right me-2"></i>Adjust Stock — {{ medicine.name }}
+    </div>
+    <div class="card-body p-4">
+        <div class="mb-4 p-3 rounded" style="background:#f8fafc; border:1.5px solid #e8edf2">
+            <div class="text-muted mb-1" style="font-size:0.8rem">Current Stock</div>
+            <div class="fw-700" style="font-size:1.8rem; color:{% if medicine.stock <= 0 %}#e74c3c{% elif medicine.stock <= 5 %}#f39c12{% else %}#27ae60{% endif %}">
+                {{ medicine.stock }} units
+            </div>
+            <div class="text-muted" style="font-size:0.8rem">{{ medicine.category }} | ₹{{ medicine.mrp }} MRP</div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Adjustment Type</label>
+                <select name="type" class="form-select">
+                    <option value="in">📥 Stock In (Add stock)</option>
+                    <option value="out">📤 Stock Out (Remove stock)</option>
+                    <option value="adjustment">⚖️ Set Exact Quantity</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Quantity</label>
+                <input type="number" name="quantity" class="form-control" step="0.01" min="0" required placeholder="0">
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Note (optional)</label>
+                <input type="text" name="note" class="form-control" placeholder="e.g. New batch received, expired stock removed...">
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-1"></i> Update Stock
+                </button>
+                <a href="{% url 'medicine_detail' medicine.pk %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

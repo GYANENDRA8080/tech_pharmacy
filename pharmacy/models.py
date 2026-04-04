@@ -27,6 +27,7 @@ class Medicine(models.Model):
         ('OTHER', 'Other'),
     ]
 
+
     name = models.CharField(max_length=200, unique=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='TAB')
     batch_no = models.CharField(max_length=100, blank=True)

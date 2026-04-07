@@ -3,8 +3,8 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'swastik-pharmacy-secret-key-change-in-production-2024'
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+DEBUG = False
+ALLOWED_HOSTS = ['your-username.pythonanywhere.com']  # Replace with your PythonAnywhere domain
 
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -592,6 +592,8 @@
                             {{ user.first_name|default:user.username }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'change_username' %}"><i
+                                        class="bi bi-person-gear me-2"></i>Change Username</a></li>
                             <li><a class="dropdown-item" href="/admin/"><i class="bi bi-gear me-2"></i>Account
                                     Settings</a></li>
                             <li>

@@ -118,6 +118,49 @@ Swastik Pharmacy Management System
         # In development, this will show in console
 
 
+@login_required(login_url="login")
+def change_username(request):
+    """Change username after password confirmation"""
+    if request.method == "POST":
+        current_password = request.POST.get("current_password")
+        new_username = request.POST.get("new_username")
+
+        # Validate current password
+        if not request.user.check_password(current_password):
+            messages.error(request, "Current password is incorrect!")
+            return redirect("change_username")
+
+        # Validate new username
+        if not new_username or len(new_username.strip()) < 3:
+            messages.error(request, "Username must be at least 3 characters long!")
+            return redirect("change_username")
+
+        new_username = new_username.strip()
+
+        # Check if username already exists
+        if (
+            User.objects.filter(username=new_username)
+            .exclude(id=request.user.id)
+            .exists()
+        ):
+            messages.error(request, "This username is already taken!")
+            return redirect("change_username")
+
+        # Update username
+        try:
+            request.user.username = new_username
+            request.user.save()
+            messages.success(
+                request, f"Username successfully changed to '{new_username}'!"
+            )
+            return redirect("dashboard")
+        except Exception as e:
+            messages.error(request, f"Error updating username: {str(e)}")
+            return redirect("change_username")
+
+    return render(request, "pharmacy/change_username.html")
+
+
 # ── Dashboard ─────────────────────────────────────────────────────────────────
 @login_required(login_url="login")
 def dashboard(request):

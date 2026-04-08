@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Change Username | Swastik Pharmacy</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+            rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+        <style>
+            :root {
+                --primary: #1a5276;
+                --primary-light: #2e86c1;
+                --primary-dark: #154360;
+                --accent: #27ae60;
+                --danger: #e74c3c;
+                --light-bg: #f0f4f8;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #2c3e50;
+                padding: 20px;
+            }
+
+            .change-username-container {
+                width: 100%;
+                max-width: 500px;
+                animation: slideUp 0.6s ease-out;
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .change-username-card {
+                background: #fff;
+                border-radius: 18px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                padding: 40px 35px;
+            }
+
+            .change-username-header {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .user-icon {
+                font-size: 3.5rem;
+                color: var(--primary);
+                margin-bottom: 15px;
+                display: inline-block;
+            }
+
+            .pharmacy-name {
+                font-family: 'Playfair Display', serif;
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--primary-dark);
+                margin-bottom: 8px;
+            }
+
+            .pharmacy-subtitle {
+                font-size: 0.85rem;
+                color: #7f8c8d;
+                letter-spacing: 0.5px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-label {
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 8px;
+                font-size: 0.9rem;
+            }
+
+            .form-control {
+                border: 2px solid #ecf0f1;
+                border-radius: 10px;
+                padding: 12px 15px;
+                font-size: 0.95rem;
+                transition: all 0.3s ease;
+                background: #f9fbfc;
+            }
+
+            .form-control:focus {
+                border-color: var(--primary);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
+                outline: none;
+            }
+
+            .form-control::placeholder {
+                color: #bdc3c7;
+            }
+
+            .btn-change-username {
+                width: 100%;
+                padding: 14px;
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+                color: #fff;
+                border: none;
+                border-radius: 10px;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-top: 10px;
+            }
+
+            .btn-change-username:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(26, 82, 118, 0.3);
+                color: #fff;
+            }
+
+            .alert {
+                border: none;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                font-size: 0.9rem;
+                padding: 12px 15px;
+            }
+
+            .alert-danger {
+                background: #fadbd8;
+                color: #c0392b;
+            }
+
+            .alert-success {
+                background: #d5f4e6;
+                color: #27ae60;
+            }
+
+            .back-link {
+                text-align: center;
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid #ecf0f1;
+                color: #7f8c8d;
+                font-size: 0.9rem;
+            }
+
+            .back-link a {
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 600;
+                transition: color 0.2s;
+            }
+
+            .back-link a:hover {
+                color: var(--primary-dark);
+                text-decoration: underline;
+            }
+
+            .current-username {
+                background: #ebf5fb;
+                border-left: 4px solid var(--primary);
+                padding: 12px 15px;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                font-size: 0.9rem;
+                color: #1a5276;
+            }
+
+            .current-username strong {
+                color: var(--primary-dark);
+            }
+
+            .security-note {
+                background: #fff3cd;
+                border-left: 4px solid #ffc107;
+                padding: 12px 15px;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                font-size: 0.85rem;
+                color: #856404;
+            }
+
+            .security-note i {
+                margin-right: 8px;
+                color: #ffc107;
+            }
+
+            @media (max-width: 576px) {
+                .change-username-card {
+                    padding: 30px 25px;
+                }
+
+                .pharmacy-name {
+                    font-size: 1.5rem;
+                }
+
+                .user-icon {
+                    font-size: 3rem;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="change-username-container">
+            <div class="change-username-card">
+                <!-- Header -->
+                <div class="change-username-header">
+                    <div class="user-icon">
+                        <i class="bi bi-person-gear"></i>
+                    </div>
+                    <div class="pharmacy-name">Change Username</div>
+                    <div class="pharmacy-subtitle">Swastik Pharmacy Management System</div>
+                </div>
+
+                <!-- Current Username Info -->
+                <div class="current-username">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Current Username:</strong> {{ user.username }}
+                </div>
+
+                <!-- Security Note -->
+                <div class="security-note">
+                    <i class="bi bi-shield-lock"></i>
+                    <strong>Security Note:</strong> You need to confirm your current password to change your username.
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <!-- Change Username Form -->
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <!-- Current Password -->
+                    <div class="form-group">
+                        <label for="current_password" class="form-label">
+                            <i class="bi bi-lock me-2"></i>Current Password <span style="color: var(--danger);">*</span>
+                        </label>
+                        <input type="password" class="form-control" id="current_password" name="current_password"
+                            placeholder="Enter your current password" required>
+                        <small class="text-muted d-block mt-2">
+                            🔒 Your current password is required for security
+                        </small>
+                    </div>
+
+                    <!-- New Username -->
+                    <div class="form-group">
+                        <label for="new_username" class="form-label">
+                            <i class="bi bi-person me-2"></i>New Username <span style="color: var(--danger);">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="new_username" name="new_username"
+                            placeholder="Enter new username" required minlength="3">
+                        <small class="text-muted d-block mt-2">
+                            👤 Username must be at least 3 characters long
+                        </small>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-change-username">
+                        <i class="bi bi-check-circle me-2"></i>Change Username
+                    </button>
+
+                    <!-- Back Link -->
+                    <div class="back-link">
+                        <a href="{% url 'dashboard' %}">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+
+</html>

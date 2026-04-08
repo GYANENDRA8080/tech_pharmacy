@@ -1740,6 +1740,15 @@
                         <a href="#doctors" class="btn-hero-outline" aria-label="View our doctors">
                             <i class="bi bi-person-badge" aria-hidden="true"></i> Our Doctors
                         </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="btn-hero-outline" aria-label="Go to dashboard">
+                            <i class="bi bi-speedometer2" aria-hidden="true"></i> Back to Dashboard
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn-hero-outline" aria-label="Login to dashboard">
+                            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Login Dashboard
+                        </a>
+                        {% endif %}
                     </div>
 
                     <div class="hero-stats" aria-label="Hospital statistics">

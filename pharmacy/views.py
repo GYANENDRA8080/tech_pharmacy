@@ -18,6 +18,79 @@ import random
 from .models import Medicine, Bill, BillItem, Patient, StockTransaction
 
 
+# ── PUBLIC PAGES ──────────────────────────────────────────────────────────────
+def hospital_info(request):
+    """Public hospital information page - visible before login"""
+    context = {
+        "hospital_name": "स्वास्तिक हॉस्पिटल",
+        "hospital_tagline": "द कम्पलीट सर्जिकल एंड मैटरनिटी सेंटर",
+        "hospital_subtitle": "Advance Surgical, Maternity & Child Care Service",
+        "phone_numbers": ["9450555621", "8115409504", "8009856551"],
+        "address": "Sonbarsa Bazar (Old Market Near Shiv Temole), Gorakhpur",
+        "facilities": [
+            {
+                "icon": "🚨",
+                "title": "24*7 Emergency",
+                "desc": "Round the clock emergency services",
+            },
+            {
+                "icon": "🛏️",
+                "title": "24*7 Admission",
+                "desc": "Patient admission anytime",
+            },
+            {
+                "icon": "💊",
+                "title": "24*7 Pharmacy",
+                "desc": "Medicines available round the clock",
+            },
+            {
+                "icon": "🔬",
+                "title": "24*7 Pathology",
+                "desc": "Laboratory services 24 hours",
+            },
+            {"icon": "🏥", "title": "ICU/NICU/PICU", "desc": "Intensive care units"},
+            {
+                "icon": "👨‍⚕️",
+                "title": "Expert Doctors",
+                "desc": "Experienced medical professionals",
+            },
+            {
+                "icon": "🩺",
+                "title": "Modern Equipment",
+                "desc": "Advanced medical technology",
+            },
+            {
+                "icon": "🚑",
+                "title": "Ambulance Service",
+                "desc": "24/7 emergency transport",
+            },
+        ],
+        "departments": [
+            "Emergency",
+            "Trauma",
+            "ICU",
+            "NICU",
+            "PICU",
+            "Burn",
+            "Dermatology",
+            "Orthopedics",
+            "Eye",
+            "Modular OT",
+            "Pathology",
+            "Pharmacy",
+        ],
+        "services": [
+            "🔪 Advanced Surgical Services",
+            "👶 Complete Maternity Care",
+            "👧 Child Care Specialists",
+            "🚑 24/7 Emergency Response",
+            "💉 Vaccination Programs",
+            "🩸 Blood Bank Services",
+        ],
+    }
+    return render(request, "pharmacy/hospital_info.html", context)
+
+
 # ── AUTHENTICATION ────────────────────────────────────────────────────────────
 def login_view(request):
     """User login page"""

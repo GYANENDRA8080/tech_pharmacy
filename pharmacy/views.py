@@ -87,6 +87,21 @@ def hospital_info(request):
             "💉 Vaccination Programs",
             "🩸 Blood Bank Services",
         ],
+        # Web Design & Digital Marketing Contact Info
+        "web_design_contact": {
+            "title": "Web Design & Digital Marketing",
+            "description": "Professional website development and digital solutions",
+            "phone": "9140564373",
+            "email": "gyanendra8080@gmail.com",
+            "services": [
+                "🌐 Web Design & Development",
+                "📱 Mobile App Development",
+                "📊 Digital Marketing",
+                "💻 E-Commerce Solutions",
+                "🎨 UI/UX Design",
+                "📈 SEO Optimization",
+            ],
+        },
     }
     return render(request, "pharmacy/hospital_info.html", context)
 

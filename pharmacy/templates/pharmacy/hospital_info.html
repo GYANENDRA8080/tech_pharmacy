@@ -371,6 +371,100 @@
                 text-decoration: underline;
             }
 
+            /* ── Web Design Section ────────────────────── */
+            .web-design-section {
+                background: linear-gradient(135deg, #f8f9fa 0%, white 100%);
+                padding: 40px 20px;
+                border-top: 2px dashed var(--accent);
+                border-bottom: 2px dashed var(--accent);
+            }
+
+            .web-design-container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .web-design-header {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 25px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid var(--accent);
+            }
+
+            .web-design-icon {
+                font-size: 2rem;
+            }
+
+            .web-design-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--primary-dark);
+                margin: 0;
+            }
+
+            .web-design-desc {
+                color: #7f8c8d;
+                font-size: 0.95rem;
+                margin: 0;
+            }
+
+            .web-design-content {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 25px;
+            }
+
+            .web-design-contact-card {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(26, 82, 118, 0.1);
+                border-left: 4px solid var(--accent-light);
+            }
+
+            .web-design-contact-card h5 {
+                color: var(--primary);
+                font-weight: 600;
+                margin-bottom: 12px;
+                font-size: 1rem;
+            }
+
+            .contact-link {
+                display: inline-block;
+                margin: 5px 0;
+            }
+
+            .contact-link a {
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .contact-link a:hover {
+                color: var(--accent);
+                text-decoration: underline;
+            }
+
+            .web-services-list {
+                background: linear-gradient(135deg, rgba(39, 174, 96, 0.05) 0%, rgba(46, 204, 113, 0.05) 100%);
+                padding: 15px;
+                border-radius: 8px;
+                margin-top: 10px;
+            }
+
+            .web-services-list p {
+                margin: 6px 0;
+                font-size: 0.9rem;
+                color: var(--primary-dark);
+                font-weight: 500;
+            }
+
             /* ── Footer ────────────────────── */
             .footer {
                 background: var(--primary-dark);
@@ -438,6 +532,23 @@
                 .departments-tag {
                     font-size: 0.85rem;
                     padding: 8px 16px;
+                }
+
+                .web-design-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .web-design-title {
+                    font-size: 1.2rem;
+                }
+
+                .web-design-content {
+                    grid-template-columns: 1fr;
+                }
+
+                .web-services-list p {
+                    font-size: 0.85rem;
                 }
             }
 
@@ -554,6 +665,48 @@
                 </div>
             </div>
         </section>
+
+        <!-- Web Design & Digital Marketing Section -->
+        {% if web_design_contact %}
+        <section class="web-design-section fade-in">
+            <div class="web-design-container">
+                <div class="web-design-header">
+                    <span class="web-design-icon">💻</span>
+                    <div>
+                        <h2 class="web-design-title">{{ web_design_contact.title }}</h2>
+                        <p class="web-design-desc">{{ web_design_contact.description }}</p>
+                    </div>
+                </div>
+
+                <div class="web-design-content">
+                    <!-- Contact Card -->
+                    <div class="web-design-contact-card">
+                        <h5>📱 Get In Touch</h5>
+                        <div class="contact-link">
+                            <a href="tel:{{ web_design_contact.phone }}">
+                                <i class="bi bi-telephone-fill"></i> {{ web_design_contact.phone }}
+                            </a>
+                        </div>
+                        <div class="contact-link">
+                            <a href="mailto:{{ web_design_contact.email }}">
+                                <i class="bi bi-envelope-fill"></i> {{ web_design_contact.email }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Services Card -->
+                    <div class="web-design-contact-card">
+                        <h5>🎯 Our Services</h5>
+                        <div class="web-services-list">
+                            {% for service in web_design_contact.services %}
+                            <p>{{ service }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
 
         <!-- Footer -->
         <footer class="footer">

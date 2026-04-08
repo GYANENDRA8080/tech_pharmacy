@@ -54,73 +54,15 @@ def generate_secure_password(length=12):
 
 
 def register_view(request):
-    """User registration page"""
+    """User registration page - Disabled, contact admin for new accounts"""
     if request.user.is_authenticated:
         return redirect("dashboard")
 
-    if request.method == "POST":
-        first_name = request.POST.get("first_name", "").strip()
-        last_name = request.POST.get("last_name", "").strip()
-        email = request.POST.get("email", "").strip()
-        pharmacy_name = request.POST.get("pharmacy_name", "").strip()
-        phone = request.POST.get("phone", "").strip()
-
-        # Validation
-        if not all([first_name, last_name, email, pharmacy_name, phone]):
-            messages.error(request, "सभी fields जरूरी हैं! (All fields are required)")
-            return render(request, "pharmacy/register.html")
-
-        # Check if email already exists
-        if User.objects.filter(email=email).exists():
-            messages.error(
-                request,
-                "यह email पहले से registered है! (This email is already registered)",
-            )
-            return render(request, "pharmacy/register.html")
-
-        # Generate unique username from first_name + random digits
-        base_username = f"{first_name.lower()}{random.randint(100, 999)}"
-        username = base_username
-
-        # Check if username exists
-        counter = 1
-        while User.objects.filter(username=username).exists():
-            username = f"{base_username}_{counter}"
-            counter += 1
-
-        # Generate secure password
-        password = generate_secure_password()
-
-        # Create user
-        try:
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                first_name=first_name,
-                last_name=last_name,
-                is_staff=True,  # Can access admin panel
-            )
-
-            # Send credentials via email
-            send_credentials_email(
-                email=email,
-                first_name=first_name,
-                username=username,
-                password=password,
-                pharmacy_name=pharmacy_name,
-            )
-
-            messages.success(
-                request,
-                f"✅ Registration successful! आपका username और password आपके email पर भेजा जा चुका है। (Credentials sent to your email)",
-            )
-            return redirect("login")
-
-        except Exception as e:
-            messages.error(request, f"Error during registration: {str(e)}")
-            return render(request, "pharmacy/register.html")
-
+    # Registration is disabled - show contact message
+    messages.info(
+        request,
+        "New account registration is currently disabled. Please contact the administrator for account creation.",
+    )
     return render(request, "pharmacy/register.html")
 
 

@@ -224,14 +224,102 @@
                     font-size: 3rem;
                 }
 
-                .form-row {
-                    grid-template-columns: 1fr;
+                .contact-card {
+                    padding: 20px;
+                }
+
+                .contact-item {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 8px;
+                }
+
+                .contact-link {
+                    font-size: 0.95rem;
                 }
             }
 
-            .required {
-                color: var(--danger);
-                margin-left: 2px;
+            .contact-card {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border: 2px solid var(--primary-light);
+                border-radius: 15px;
+                padding: 25px;
+                margin: 20px 0;
+                text-align: center;
+                box-shadow: 0 4px 15px rgba(26, 82, 118, 0.1);
+            }
+
+            .contact-header {
+                margin-bottom: 20px;
+            }
+
+            .contact-icon {
+                font-size: 2.5rem;
+                color: var(--primary);
+                margin-bottom: 10px;
+                display: block;
+            }
+
+            .contact-header h4 {
+                color: var(--primary-dark);
+                font-weight: 600;
+                margin: 0;
+                font-size: 1.2rem;
+            }
+
+            .contact-details {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+
+            .contact-item {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                padding: 12px;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .contact-item i {
+                font-size: 1.5rem;
+                color: var(--primary);
+                flex-shrink: 0;
+            }
+
+            .contact-link {
+                color: var(--primary-dark);
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1rem;
+                transition: color 0.2s;
+            }
+
+            .contact-link:hover {
+                color: var(--primary);
+                text-decoration: underline;
+            }
+
+            .contact-note {
+                background: #d1ecf1;
+                color: #0c5460;
+                padding: 12px;
+                border-radius: 8px;
+                border-left: 4px solid #17a2b8;
+                font-size: 0.85rem;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .contact-note i {
+                color: #17a2b8;
+                flex-shrink: 0;
+                margin-top: 2px;
             }
         </style>
     </head>
@@ -262,85 +350,40 @@
                 <!-- Info Box -->
                 <div class="info-box">
                     <i class="bi bi-info-circle"></i>
-                    <strong>Registration से पहले:</strong><br>
-                    • सभी details सही से भरें<br>
-                    • आपके credentials email पर भेजे जाएंगे<br>
-                    • Strong password automatically generate होगा
+                    <strong>नया Account बनाने के लिए:</strong><br>
+                    • Registration temporarily disabled है<br>
+                    • नए account के लिए admin से contact करें<br>
+                    • Admin आपके लिए username और password create करेगा
                 </div>
 
-                <!-- Registration Form -->
-                <form method="POST">
-                    {% csrf_token %}
-
-                    <!-- Personal Details -->
-                    <div class="form-section-title">
-                        <i class="bi bi-person-badge me-2"></i>व्यक्तिगत जानकारी
+                <!-- Contact Information -->
+                <div class="contact-card">
+                    <div class="contact-header">
+                        <i class="bi bi-person-lines-fill contact-icon"></i>
+                        <h4>Contact Administrator</h4>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="first_name" class="form-label">
-                                First Name <span class="required">*</span>
-                            </label>
-                            <input type="text" class="form-control" id="first_name" name="first_name"
-                                placeholder="First name" required>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="bi bi-telephone-fill"></i>
+                            <div>
+                                <strong>Phone:</strong><br>
+                                <a href="tel:9140564373" class="contact-link">9140564373</a>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="last_name" class="form-label">
-                                Last Name <span class="required">*</span>
-                            </label>
-                            <input type="text" class="form-control" id="last_name" name="last_name"
-                                placeholder="Last name" required>
+                        <div class="contact-item">
+                            <i class="bi bi-envelope-fill"></i>
+                            <div>
+                                <strong>Email:</strong><br>
+                                <a href="mailto:gyanendra8080@gmail.com"
+                                    class="contact-link">gyanendra8080@gmail.com</a>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Pharmacy Details -->
-                    <div class="form-section-title">
-                        <i class="bi bi-shop me-2"></i>दवाइयों की दुकान की जानकारी
+                    <div class="contact-note">
+                        <i class="bi bi-lightbulb"></i>
+                        <small>Admin will create your account and send credentials via email.</small>
                     </div>
-
-                    <div class="form-group">
-                        <label for="pharmacy_name" class="form-label">
-                            Pharmacy Name <span class="required">*</span>
-                        </label>
-                        <input type="text" class="form-control" id="pharmacy_name" name="pharmacy_name"
-                            placeholder="e.g., Swastik Pharmacy Center" required>
-                    </div>
-
-                    <!-- Contact Details -->
-                    <div class="form-section-title">
-                        <i class="bi bi-telephone me-2"></i>संपर्क विवरण
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email" class="form-label">
-                            Email <span class="required">*</span>
-                        </label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="your@email.com"
-                            required>
-                        <small class="text-muted d-block mt-2">
-                            📧 आपका username और password इसी email पर भेजे जाएंगे
-                        </small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone" class="form-label">
-                            Phone Number <span class="required">*</span>
-                        </label>
-                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="10-digit number"
-                            required>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn-register">
-                        <i class="bi bi-check-circle me-2"></i>Register Now
-                    </button>
-
-                    <!-- Login Link -->
-                    <div class="login-link">
-                        पहले से account है? <a href="{% url 'login' %}">Login करें</a>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
 

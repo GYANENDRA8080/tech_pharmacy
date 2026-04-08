@@ -1331,6 +1331,10 @@
                 <a href="tel:{{ phone_numbers.0 }}" class="btn-call">
                     <i class="bi bi-telephone-fill"></i> Call Now
                 </a>
+                <a href="{% url 'login' %}" class="btn-call"
+                    style="background: white; color: var(--navy); border: 1px solid rgba(10,22,40,0.08); box-shadow: 0 4px 15px rgba(255,255,255,0.25);">
+                    <i class="bi bi-box-arrow-in-right"></i> Login Dashboard
+                </a>
             </div>
 
             <div class="hamburger" id="hamburger" onclick="toggleMenu()">
@@ -1346,6 +1350,7 @@
                 <li><a href="#doctors" onclick="toggleMenu()">Doctors</a></li>
                 <li><a href="#departments" onclick="toggleMenu()">Departments</a></li>
                 <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+                <li><a href="{% url 'login' %}" onclick="toggleMenu()">Login</a></li>
             </ul>
             <div class="mobile-cta">
                 <a href="tel:{{ phone_numbers.0 }}" class="btn-call">📞 Call: {{ phone_numbers.0 }}</a>
@@ -1372,6 +1377,9 @@
                     style="background: rgba(212,168,83,0.1); border: 1px solid rgba(212,168,83,0.3); border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; display: inline-block;">
                     <p style="color: var(--gold-light); font-weight: 600; margin: 0; font-size: 0.9rem;">
                         ℹ️ <strong>Click here to know more</strong> about our hospital facilities, doctors, and services
+                    </p>
+                    <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0 0; font-size: 0.85rem;">
+                        हम आपके परिवार की सेहत को अपनी प्राथमिकता मानते हैं। हर मरीज यहाँ हमारे परिवार जैसा होता है।
                     </p>
                 </div>
 

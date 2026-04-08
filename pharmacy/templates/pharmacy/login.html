@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login | Swastik Pharmacy</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+            rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+        <style>
+            :root {
+                --primary: #1a5276;
+                --primary-light: #2e86c1;
+                --primary-dark: #154360;
+                --accent: #27ae60;
+                --danger: #e74c3c;
+                --light-bg: #f0f4f8;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #2c3e50;
+            }
+
+            .login-container {
+                width: 100%;
+                max-width: 420px;
+                padding: 20px;
+            }
+
+            .login-card {
+                background: #fff;
+                border-radius: 18px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                padding: 45px 35px;
+                animation: slideUp 0.6s ease-out;
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .login-header {
+                text-align: center;
+                margin-bottom: 35px;
+            }
+
+            .pharmacy-icon {
+                font-size: 3.5rem;
+                color: var(--primary);
+                margin-bottom: 15px;
+                display: inline-block;
+            }
+
+            .pharmacy-name {
+                font-family: 'Playfair Display', serif;
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--primary-dark);
+                margin-bottom: 8px;
+            }
+
+            .pharmacy-subtitle {
+                font-size: 0.85rem;
+                color: #7f8c8d;
+                letter-spacing: 0.5px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-label {
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 8px;
+                font-size: 0.9rem;
+            }
+
+            .form-control {
+                border: 2px solid #ecf0f1;
+                border-radius: 10px;
+                padding: 11px 15px;
+                font-size: 0.95rem;
+                transition: all 0.3s ease;
+                background: #f9fbfc;
+            }
+
+            .form-control:focus {
+                border-color: var(--primary);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
+                outline: none;
+            }
+
+            .form-control::placeholder {
+                color: #bdc3c7;
+            }
+
+            .input-group-text {
+                background: transparent;
+                border: 2px solid #ecf0f1;
+                border-right: none;
+                color: var(--primary);
+            }
+
+            .input-group .form-control {
+                border-left: none;
+            }
+
+            .input-group .form-control:focus~.input-group-text,
+            .input-group .form-control:focus+.input-group-text {
+                border-color: var(--primary);
+            }
+
+            .btn-login {
+                width: 100%;
+                padding: 12px;
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+                color: #fff;
+                border: none;
+                border-radius: 10px;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-top: 10px;
+            }
+
+            .btn-login:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(26, 82, 118, 0.3);
+                color: #fff;
+            }
+
+            .btn-login:active {
+                transform: translateY(0);
+            }
+
+            .alert {
+                border: none;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                font-size: 0.9rem;
+                padding: 12px 15px;
+            }
+
+            .alert-danger {
+                background: #fadbd8;
+                color: #c0392b;
+            }
+
+            .alert-danger strong {
+                font-weight: 600;
+            }
+
+            .remember-forgot {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 15px;
+                font-size: 0.85rem;
+            }
+
+            .form-check {
+                margin: 0;
+            }
+
+            .form-check-input {
+                width: 18px;
+                height: 18px;
+                border: 2px solid #bdc3c7;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .form-check-input:checked {
+                background-color: var(--primary);
+                border-color: var(--primary);
+            }
+
+            .form-check-label {
+                margin-left: 8px;
+                cursor: pointer;
+                color: #2c3e50;
+                font-weight: 500;
+            }
+
+            .forgot-password {
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 500;
+                transition: color 0.2s;
+            }
+
+            .forgot-password:hover {
+                color: var(--primary-dark);
+                text-decoration: underline;
+            }
+
+            .login-footer {
+                text-align: center;
+                margin-top: 25px;
+                padding-top: 20px;
+                border-top: 1px solid #ecf0f1;
+                color: #7f8c8d;
+                font-size: 0.85rem;
+            }
+
+            .info-text {
+                background: #ebf5fb;
+                border-left: 4px solid var(--primary);
+                padding: 12px 15px;
+                border-radius: 6px;
+                margin-top: 20px;
+                font-size: 0.85rem;
+                color: #1a5276;
+                line-height: 1.6;
+            }
+
+            .info-text i {
+                margin-right: 8px;
+                color: var(--primary);
+            }
+
+            /* Mobile Responsive */
+            @media (max-width: 576px) {
+                .login-card {
+                    padding: 30px 25px;
+                }
+
+                .pharmacy-name {
+                    font-size: 1.5rem;
+                }
+
+                .pharmacy-icon {
+                    font-size: 3rem;
+                }
+            }
+
+            .input-icon {
+                font-size: 1.1rem;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="login-container">
+            <div class="login-card">
+                <!-- Header -->
+                <div class="login-header">
+                    <div class="pharmacy-icon">
+                        <i class="bi bi-hospital"></i>
+                    </div>
+                    <div class="pharmacy-name">Swastik Pharmacy</div>
+                    <div class="pharmacy-subtitle">Pharmacy Management System</div>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <!-- Login Form -->
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <!-- Username Field -->
+                    <div class="form-group">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person-circle me-2"></i>Username
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username"
+                            placeholder="Enter your username" required autofocus>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock-fill me-2"></i>Password
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password"
+                            placeholder="Enter your password" required>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="remember-forgot">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">
+                                Remember me
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="btn-login">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </button>
+                </form>
+
+                <!-- Register Link -->
+                <div class="login-link"
+                    style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ecf0f1; color: #7f8c8d; font-size: 0.9rem;">
+                    अभी तक account नहीं है? <a href="{% url 'register' %}"
+                        style="color: var(--primary); text-decoration: none; font-weight: 600;">Register करें</a>
+                </div>
+
+                <!-- Footer -->
+                <div class="login-footer">
+                    <p>🔒 Secure Login System | एक सुरक्षित प्रणाली</p>
+                    <p style="margin-top: 8px; font-size: 0.75rem;">
+                        © 2024 Swastik Pharmacy & Surgical Center
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+
+</html>

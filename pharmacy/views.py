@@ -1,5 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.db.models import Sum, Count, Q
@@ -8,11 +12,172 @@ from django.conf import settings
 import json
 import datetime
 import io
+import string
+import random
 
 from .models import Medicine, Bill, BillItem, Patient, StockTransaction
 
 
+# ── AUTHENTICATION ────────────────────────────────────────────────────────────
+def login_view(request):
+    """User login page"""
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            messages.success(request, f"Welcome {user.first_name or user.username}!")
+            return redirect("dashboard")
+        else:
+            messages.error(request, "Invalid username or password!")
+
+    return render(request, "pharmacy/login.html")
+
+
+def logout_view(request):
+    """User logout"""
+    logout(request)
+    messages.info(request, "You have been logged out.")
+    return redirect("login")
+
+
+def generate_secure_password(length=12):
+    """Generate a secure random password"""
+    characters = string.ascii_letters + string.digits + "!@#$%"
+    return "".join(random.choice(characters) for _ in range(length))
+
+
+def register_view(request):
+    """User registration page"""
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+
+    if request.method == "POST":
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        email = request.POST.get("email", "").strip()
+        pharmacy_name = request.POST.get("pharmacy_name", "").strip()
+        phone = request.POST.get("phone", "").strip()
+
+        # Validation
+        if not all([first_name, last_name, email, pharmacy_name, phone]):
+            messages.error(request, "सभी fields जरूरी हैं! (All fields are required)")
+            return render(request, "pharmacy/register.html")
+
+        # Check if email already exists
+        if User.objects.filter(email=email).exists():
+            messages.error(
+                request,
+                "यह email पहले से registered है! (This email is already registered)",
+            )
+            return render(request, "pharmacy/register.html")
+
+        # Generate unique username from first_name + random digits
+        base_username = f"{first_name.lower()}{random.randint(100, 999)}"
+        username = base_username
+
+        # Check if username exists
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}_{counter}"
+            counter += 1
+
+        # Generate secure password
+        password = generate_secure_password()
+
+        # Create user
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                is_staff=True,  # Can access admin panel
+            )
+
+            # Send credentials via email
+            send_credentials_email(
+                email=email,
+                first_name=first_name,
+                username=username,
+                password=password,
+                pharmacy_name=pharmacy_name,
+            )
+
+            messages.success(
+                request,
+                f"✅ Registration successful! आपका username और password आपके email पर भेजा जा चुका है। (Credentials sent to your email)",
+            )
+            return redirect("login")
+
+        except Exception as e:
+            messages.error(request, f"Error during registration: {str(e)}")
+            return render(request, "pharmacy/register.html")
+
+    return render(request, "pharmacy/register.html")
+
+
+def send_credentials_email(email, first_name, username, password, pharmacy_name):
+    """Send login credentials via email"""
+    subject = "Swastik Pharmacy - Your Login Credentials"
+    message = f"""
+नमस्ते {first_name},
+
+Swastik Pharmacy Management System में आपका स्वागत है!
+
+आपकी खाता सफलतापूर्वक बनाई गई है। नीचे दिए गए credentials का उपयोग करके login करें:
+
+═══════════════════════════════════════════
+📊 PHARMACY NAME: {pharmacy_name}
+👤 USERNAME: {username}
+🔐 PASSWORD: {password}
+🔗 LOGIN URL: http://localhost:8000/login/
+═══════════════════════════════════════════
+
+⚠️ महत्वपूर्ण: 
+- अपने password को किसी से share न करें
+- पहली login के बाद अपना password change करें
+- यदि आप password भूल जाएं तो admin से contact करें
+
+🔒 This is a secure system. Keep your credentials safe!
+
+Dashboard में login करने के बाद आप:
+✓ Medicine inventory manage कर सकते हैं
+✓ Bills create और print कर सकते हैं
+✓ Sales reports देख सकते हैं
+✓ Stock alerts प्राप्त कर सकते हैं
+
+यदि कोई समस्या हो तो हमसे संपर्क करें:
+📞 Phone: 9450055621 / 8115409504
+📧 Email: admin@swastikpharmacy.com
+
+धन्यवाद,
+Swastik Pharmacy Management System
+"""
+
+    try:
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        print(f"✅ Email sent to {email}")
+    except Exception as e:
+        print(f"❌ Error sending email: {str(e)}")
+        # In development, this will show in console
+
+
 # ── Dashboard ─────────────────────────────────────────────────────────────────
+@login_required(login_url="login")
 def dashboard(request):
     today = datetime.date.today()
     this_month = today.replace(day=1)
@@ -64,6 +229,7 @@ def dashboard(request):
 
 
 # ── Inventory ─────────────────────────────────────────────────────────────────
+@login_required(login_url="login")
 def inventory(request):
     q = request.GET.get("q", "")
     category = request.GET.get("category", "")
@@ -106,6 +272,7 @@ def inventory(request):
     return render(request, "pharmacy/inventory.html", context)
 
 
+@login_required(login_url="login")
 def medicine_add(request):
     if request.method == "POST":
         try:
@@ -183,6 +350,7 @@ def medicine_delete(request, pk):
     )
 
 
+@login_required(login_url="login")
 def medicine_detail(request, pk):
     med = get_object_or_404(Medicine, pk=pk)
     transactions = StockTransaction.objects.filter(medicine=med).order_by(
@@ -195,6 +363,7 @@ def medicine_detail(request, pk):
     )
 
 
+@login_required(login_url="login")
 def stock_adjust(request, pk):
     med = get_object_or_404(Medicine, pk=pk)
     if request.method == "POST":
@@ -217,6 +386,7 @@ def stock_adjust(request, pk):
 
 
 # ── Billing ───────────────────────────────────────────────────────────────────
+@login_required(login_url="login")
 def billing(request):
     bills = Bill.objects.prefetch_related("items").order_by("-created_at")
     q = request.GET.get("q", "")
@@ -230,6 +400,7 @@ def billing(request):
     return render(request, "pharmacy/billing.html", context)
 
 
+@login_required(login_url="login")
 def create_bill(request):
     medicines = Medicine.objects.filter(stock__gt=0).values(
         "id", "name", "category", "pack", "mrp", "gst_percent", "stock"
@@ -239,6 +410,7 @@ def create_bill(request):
 
 
 @require_POST
+@login_required(login_url="login")
 def save_bill(request):
     try:
         data = json.loads(request.body)
@@ -322,6 +494,7 @@ def bill_detail(request, pk):
     return render(request, "pharmacy/bill_detail.html", {"bill": bill})
 
 
+@login_required(login_url="login")
 def bill_pdf(request, pk):
     bill = get_object_or_404(Bill, pk=pk)
     try:
@@ -556,6 +729,7 @@ def bill_pdf(request, pk):
 
 
 # ── Alerts ────────────────────────────────────────────────────────────────────
+@login_required(login_url="login")
 def alerts(request):
     today = datetime.date.today()
     out_of_stock = Medicine.objects.filter(stock__lte=0)
@@ -574,6 +748,7 @@ def alerts(request):
 
 
 # ── WhatsApp ──────────────────────────────────────────────────────────────────
+@login_required(login_url="login")
 def send_whatsapp_bill(request, pk):
     """Send bill via WhatsApp Business API"""
     bill = get_object_or_404(Bill, pk=pk)
@@ -624,6 +799,7 @@ def send_whatsapp_bill(request, pk):
 
 
 # ── API Endpoints ─────────────────────────────────────────────────────────────
+@login_required(login_url="login")
 def medicine_search_api(request):
     q = request.GET.get("q", "")
     medicines = Medicine.objects.filter(name__icontains=q, stock__gt=0)[:15]
@@ -642,6 +818,7 @@ def medicine_search_api(request):
     return JsonResponse({"results": data})
 
 
+@login_required(login_url="login")
 def dashboard_stats_api(request):
     today = datetime.date.today()
     this_month = today.replace(day=1)

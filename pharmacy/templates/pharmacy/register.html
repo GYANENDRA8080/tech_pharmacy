@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Register | Swastik Pharmacy</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+            rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+        <style>
+            :root {
+                --primary: #1a5276;
+                --primary-light: #2e86c1;
+                --primary-dark: #154360;
+                --accent: #27ae60;
+                --danger: #e74c3c;
+                --light-bg: #f0f4f8;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #2c3e50;
+                padding: 20px;
+            }
+
+            .register-container {
+                width: 100%;
+                max-width: 500px;
+                animation: slideUp 0.6s ease-out;
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .register-card {
+                background: #fff;
+                border-radius: 18px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                padding: 40px 35px;
+            }
+
+            .register-header {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .pharmacy-icon {
+                font-size: 3.5rem;
+                color: var(--primary);
+                margin-bottom: 15px;
+                display: inline-block;
+            }
+
+            .pharmacy-name {
+                font-family: 'Playfair Display', serif;
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--primary-dark);
+                margin-bottom: 8px;
+            }
+
+            .pharmacy-subtitle {
+                font-size: 0.85rem;
+                color: #7f8c8d;
+                letter-spacing: 0.5px;
+            }
+
+            .form-section-title {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: var(--primary);
+                margin-top: 20px;
+                margin-bottom: 12px;
+                padding-bottom: 8px;
+                border-bottom: 2px solid var(--light-bg);
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-label {
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 6px;
+                font-size: 0.9rem;
+            }
+
+            .form-control {
+                border: 2px solid #ecf0f1;
+                border-radius: 10px;
+                padding: 10px 15px;
+                font-size: 0.95rem;
+                transition: all 0.3s ease;
+                background: #f9fbfc;
+            }
+
+            .form-control:focus {
+                border-color: var(--primary);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
+                outline: none;
+            }
+
+            .form-control::placeholder {
+                color: #bdc3c7;
+            }
+
+            .form-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .btn-register {
+                width: 100%;
+                padding: 12px;
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+                color: #fff;
+                border: none;
+                border-radius: 10px;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-top: 15px;
+            }
+
+            .btn-register:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(26, 82, 118, 0.3);
+                color: #fff;
+            }
+
+            .alert {
+                border: none;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                font-size: 0.9rem;
+                padding: 12px 15px;
+            }
+
+            .alert-danger {
+                background: #fadbd8;
+                color: #c0392b;
+            }
+
+            .alert-success {
+                background: #d5f4e6;
+                color: #27ae60;
+            }
+
+            .login-link {
+                text-align: center;
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid #ecf0f1;
+                color: #7f8c8d;
+                font-size: 0.9rem;
+            }
+
+            .login-link a {
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 600;
+                transition: color 0.2s;
+            }
+
+            .login-link a:hover {
+                color: var(--primary-dark);
+                text-decoration: underline;
+            }
+
+            .info-box {
+                background: #ebf5fb;
+                border-left: 4px solid var(--primary);
+                padding: 12px 15px;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                font-size: 0.85rem;
+                color: #1a5276;
+                line-height: 1.6;
+            }
+
+            .info-box i {
+                margin-right: 8px;
+                color: var(--primary);
+            }
+
+            @media (max-width: 576px) {
+                .register-card {
+                    padding: 30px 25px;
+                }
+
+                .pharmacy-name {
+                    font-size: 1.5rem;
+                }
+
+                .pharmacy-icon {
+                    font-size: 3rem;
+                }
+
+                .form-row {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .required {
+                color: var(--danger);
+                margin-left: 2px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="register-container">
+            <div class="register-card">
+                <!-- Header -->
+                <div class="register-header">
+                    <div class="pharmacy-icon">
+                        <i class="bi bi-hospital"></i>
+                    </div>
+                    <div class="pharmacy-name">Swastik Pharmacy</div>
+                    <div class="pharmacy-subtitle">Pharmacy Management System - Registration</div>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <!-- Info Box -->
+                <div class="info-box">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Registration से पहले:</strong><br>
+                    • सभी details सही से भरें<br>
+                    • आपके credentials email पर भेजे जाएंगे<br>
+                    • Strong password automatically generate होगा
+                </div>
+
+                <!-- Registration Form -->
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <!-- Personal Details -->
+                    <div class="form-section-title">
+                        <i class="bi bi-person-badge me-2"></i>व्यक्तिगत जानकारी
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name" class="form-label">
+                                First Name <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="first_name" name="first_name"
+                                placeholder="First name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name" class="form-label">
+                                Last Name <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="last_name" name="last_name"
+                                placeholder="Last name" required>
+                        </div>
+                    </div>
+
+                    <!-- Pharmacy Details -->
+                    <div class="form-section-title">
+                        <i class="bi bi-shop me-2"></i>दवाइयों की दुकान की जानकारी
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pharmacy_name" class="form-label">
+                            Pharmacy Name <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="pharmacy_name" name="pharmacy_name"
+                            placeholder="e.g., Swastik Pharmacy Center" required>
+                    </div>
+
+                    <!-- Contact Details -->
+                    <div class="form-section-title">
+                        <i class="bi bi-telephone me-2"></i>संपर्क विवरण
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            Email <span class="required">*</span>
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="your@email.com"
+                            required>
+                        <small class="text-muted d-block mt-2">
+                            📧 आपका username और password इसी email पर भेजे जाएंगे
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone" class="form-label">
+                            Phone Number <span class="required">*</span>
+                        </label>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="10-digit number"
+                            required>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-register">
+                        <i class="bi bi-check-circle me-2"></i>Register Now
+                    </button>
+
+                    <!-- Login Link -->
+                    <div class="login-link">
+                        पहले से account है? <a href="{% url 'login' %}">Login करें</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+
+</html>

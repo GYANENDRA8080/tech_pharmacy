@@ -6,21 +6,48 @@
 
 ---
 
-## 🔑 Login Credentials
+## 🔑 Current Login Credentials
 
-### Admin User (Full Access)
+### 👨‍💼 ADMIN USER (Full Access - Developer Only)
 ```
-Username: admin
-Password: admin123
+Username: admin_user
+Password: Admin@123
 Email: admin@swastikpharmacy.com
+Status: FULL ACCESS - All Features
 ```
 
-### Pharmacist User (Limited Access)
+**Admin User Can Access:**
+- ✅ Full Dashboard & Analytics
+- ✅ Admin Panel (Developer Only)
+- ✅ User Management
+- ✅ System Settings
+- ✅ All Reports & Data
+- ✅ Account Settings
+
+---
+
+### 👤 STAFF USER (Limited Access - Work Only)
 ```
-Username: pharmacist
-Password: pharmacist123
-Email: pharmacist@swastikpharmacy.com
+Username: staff_user
+Password: Staff@123
+Email: staff@swastikpharmacy.com
+Status: LIMITED ACCESS - Workspace Only
 ```
+
+**Staff User Can Access:**
+- ✅ Medicine Inventory Management
+- ✅ Create & Print Bills
+- ✅ Patient Management
+- ✅ Stock Tracking
+- ✅ Sales Reports
+- ✅ Change Username
+
+**Staff User CANNOT Access:**
+- ❌ Admin Panel
+- ❌ User Management
+- ❌ System Settings
+- ❌ Developer Features
+- ❌ Configuration Options
 
 ---
 

@@ -1399,6 +1399,119 @@
                     grid-template-columns: 1fr;
                 }
             }
+
+            /* Additional mobile enhancements for better responsiveness */
+            @media (max-width: 576px) {
+                .hero-title {
+                    font-size: 2.2rem;
+                    line-height: 1.1;
+                }
+
+                .hero-subtitle {
+                    font-size: 0.95rem;
+                    line-height: 1.6;
+                }
+
+                .hero-tagline {
+                    font-size: 0.9rem;
+                    margin-bottom: 24px;
+                }
+
+                .emergency-banner {
+                    padding: 12px 5%;
+                    flex-direction: column;
+                    gap: 8px;
+                    align-items: center;
+                }
+
+                .emergency-banner a {
+                    padding: 6px 12px;
+                    font-size: 0.85rem;
+                    width: auto;
+                    min-width: 120px;
+                    text-align: center;
+                }
+
+                .nav-brand-text strong {
+                    font-size: 0.9rem;
+                }
+
+                .nav-brand-text span {
+                    font-size: 0.55rem;
+                }
+
+                .btn-call {
+                    padding: 8px 16px;
+                    font-size: 0.75rem;
+                }
+
+                .facility-card {
+                    padding: 28px 20px;
+                }
+
+                .facility-icon-wrap {
+                    width: 50px;
+                    height: 50px;
+                    font-size: 1.6rem;
+                }
+
+                .doctor-card {
+                    padding: 24px;
+                }
+
+                .doctor-avatar {
+                    width: 48px;
+                    height: 48px;
+                    font-size: 1.3rem;
+                }
+
+                .pharmacy-card {
+                    padding: 30px 20px;
+                    gap: 30px;
+                }
+
+                .contact-card-item {
+                    padding: 24px;
+                }
+
+                .map-embed {
+                    height: 350px;
+                    padding: 20px;
+                }
+            }
+
+            /* Fade-in animation for enhanced visual appeal */
+            .fade-in {
+                animation: fadeIn 1s ease both;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Improved glassmorphism effects for modern look */
+            .glass-enhanced {
+                backdrop-filter: blur(15px);
+                -webkit-backdrop-filter: blur(15px);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+            }
+
+            /* Smooth transitions for interactive elements */
+            .interactive-element {
+                transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+
+            .interactive-element:hover {
+                transform: translateY(-2px);
+            }
         </style>
     </head>
 

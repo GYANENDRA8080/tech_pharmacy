@@ -247,6 +247,40 @@
                 color: var(--primary);
             }
 
+            .info-link-callout {
+                background: #f4f8ff;
+                border: 1px solid #d6eaf8;
+                border-radius: 12px;
+                padding: 18px 18px 14px;
+                margin: 20px 0 0;
+                text-align: center;
+            }
+
+            .info-link-callout p {
+                margin: 0 0 10px;
+                color: #154360;
+                font-size: 0.95rem;
+                font-weight: 500;
+            }
+
+            .btn-link-outline {
+                display: inline-block;
+                padding: 10px 18px;
+                border: 1px solid var(--primary);
+                border-radius: 10px;
+                background: #fff;
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.25s ease;
+            }
+
+            .btn-link-outline:hover {
+                background: var(--primary-light);
+                color: #fff;
+                border-color: transparent;
+            }
+
             /* Mobile Responsive */
             @media (max-width: 576px) {
                 .login-card {
@@ -327,6 +361,12 @@
                     <button type="submit" class="btn-login">
                         <i class="bi bi-box-arrow-in-right me-2"></i>Login
                     </button>
+
+                    <div class="info-link-callout">
+                        <p>Want to learn more about our hospital services?</p>
+                        <a href="{% url 'hospital_info' %}" class="btn-link-outline">
+                            Click here to know more about Swastik Hospital</a>
+                    </div>
                 </form>
 
                 <!-- Register Link -->
@@ -342,12 +382,6 @@
                     <p>🔒 Secure Login System | एक सुरक्षित प्रणाली</p>
                     <p style="margin-top: 8px; font-size: 0.75rem;">
                         © 2024 Swastik Pharmacy & Surgical Center
-                    </p>
-                    <p style="margin-top: 12px;">
-                        <a href="{% url 'hospital_info' %}"
-                            style="color: var(--primary); text-decoration: none; font-size: 0.8rem; font-weight: 600;">
-                            ℹ️ हॉस्पिटल की जानकारी देखें
-                        </a>
                     </p>
                 </div>
             </div>

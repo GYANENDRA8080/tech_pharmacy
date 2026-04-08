@@ -1312,7 +1312,50 @@
                 }
 
                 .hero-content {
-                    padding: 90px 5% 50px;
+                    padding: 80px 5% 45px;
+                }
+
+                .hero-note {
+                    width: 100%;
+                    padding: 18px 20px;
+                    margin-bottom: 24px;
+                }
+
+                .hero-note-text {
+                    font-size: 1rem;
+                    line-height: 1.75;
+                }
+
+                .hero-title {
+                    font-size: clamp(2.4rem, 9vw, 3.6rem);
+                    line-height: 1.1;
+                    margin-bottom: 18px;
+                }
+
+                .hero-subtitle {
+                    font-size: 1rem;
+                    max-width: 100%;
+                    margin-bottom: 18px;
+                }
+
+                .hero-tagline {
+                    font-size: 0.95rem;
+                    margin-bottom: 28px;
+                }
+
+                .hero-services-strip {
+                    gap: 8px;
+                }
+
+                .hero-actions {
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 14px;
+                }
+
+                .hero-actions a {
+                    width: 100%;
+                    justify-content: center;
                 }
 
                 .facilities-section,
@@ -1326,8 +1369,30 @@
             }
 
             @media (max-width: 480px) {
+                .hero-note {
+                    padding: 18px 18px;
+                    border-radius: 16px;
+                }
+
+                .hero-note-text {
+                    font-size: 1rem;
+                }
+
                 .hero-stats {
                     gap: 20px;
+                }
+
+                .hero-badge {
+                    font-size: 0.72rem;
+                    padding: 7px 14px;
+                }
+
+                .hero-title {
+                    font-size: 2.6rem;
+                }
+
+                .hero-subtitle {
+                    font-size: 0.98rem;
                 }
 
                 .doctors-grid {
@@ -1373,10 +1438,17 @@
                 <a href="tel:{{ phone_numbers.0 }}" class="btn-call">
                     <i class="bi bi-telephone-fill"></i> Call Now
                 </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn-call"
+                    style="background: var(--teal-light); color: var(--navy); border: none; box-shadow: 0 4px 15px rgba(20,184,166,0.25);">
+                    <i class="bi bi-speedometer2"></i> Back to Dashboard
+                </a>
+                {% else %}
                 <a href="{% url 'login' %}" class="btn-call"
                     style="background: white; color: var(--navy); border: 1px solid rgba(10,22,40,0.08); box-shadow: 0 4px 15px rgba(255,255,255,0.25);">
                     <i class="bi bi-box-arrow-in-right"></i> Login Dashboard
                 </a>
+                {% endif %}
             </div>
 
             <div class="hamburger" id="hamburger" onclick="toggleMenu()">
@@ -1392,7 +1464,11 @@
                 <li><a href="#doctors" onclick="toggleMenu()">Doctors</a></li>
                 <li><a href="#departments" onclick="toggleMenu()">Departments</a></li>
                 <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}" onclick="toggleMenu()">Back to Dashboard</a></li>
+                {% else %}
                 <li><a href="{% url 'login' %}" onclick="toggleMenu()">Login</a></li>
+                {% endif %}
             </ul>
             <div class="mobile-cta">
                 <a href="tel:{{ phone_numbers.0 }}" class="btn-call">📞 Call: {{ phone_numbers.0 }}</a>
